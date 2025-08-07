@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://de854ey4oe2cm"]
+
+[ext_resource type="Texture2D" uid="uid://blu0kuy2ut1oa" path="res://assets/base_floor.png" id="1_ihg2l"]
+[ext_resource type="PackedScene" uid="uid://caunhqxcituvy" path="res://scenes/player.tscn" id="4_oxv3c"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cmr4h"]
+texture = ExtResource("1_ihg2l")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_04mld"]
+tile_size = Vector2i(32, 32)
+sources/4 = SubResource("TileSetAtlasSource_cmr4h")
+
+[node name="BaseCamp" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("4_oxv3c")]
+position = Vector2(3, 3)
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+position = Vector2(17, -7)
+tile_set = SubResource("TileSet_04mld")
