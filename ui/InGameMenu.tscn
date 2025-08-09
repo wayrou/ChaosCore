@@ -1,0 +1,51 @@
+[gd_scene load_steps=2 format=3 uid="uid://llr7hreh6ajk"]
+
+[ext_resource type="Script" uid="uid://c8jymn6nyuuvw" path="res://scripts/InGameMenu.gd" id="1_3up2l"]
+
+[node name="InGameMenu" type="CanvasLayer"]
+layer = 128
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_3up2l")
+
+[node name="Backdrop" type="Panel" parent="Root"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Window" type="Panel" parent="Root"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBox" type="VBoxContainer" parent="Root/Window"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Title" type="Label" parent="Root/Window/VBox"]
+layout_mode = 2
+
+[node name="Tabs" type="HBoxContainer" parent="Root/Window/VBox"]
+layout_mode = 2
+
+[node name="InvBtn" type="Button" parent="Root/Window/VBox/Tabs"]
+layout_mode = 2
+
+[node name="UnitsBtn" type="Button" parent="Root/Window/VBox/Tabs"]
+layout_mode = 2
+
+[node name="Content" type="Panel" parent="Root/Window/VBox"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Root/Window/VBox/Content"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CloseBtn" type="Button" parent="Root/Window/VBox"]
+layout_mode = 2

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://blu0kuy2ut1oa"
-path="res://.godot/imported/base_floor.png-2b8a8ec6ac290e0b19f81455156d2a4c.ctex"
+uid="uid://bqthlajge1a2q"
+path="res://.godot/imported/enemyTemp.png-e3c2fac067369689d3e2389f810a044b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/base_floor.png"
-dest_files=["res://.godot/imported/base_floor.png-2b8a8ec6ac290e0b19f81455156d2a4c.ctex"]
+source_file="res://assets/enemyTemp.png"
+dest_files=["res://.godot/imported/enemyTemp.png-e3c2fac067369689d3e2389f810a044b.ctex"]
 
 [params]
 

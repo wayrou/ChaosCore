@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://brds5wje5jvi"]
+
+[ext_resource type="Script" uid="uid://c4bql3ysdg4k1" path="res://scenes/enemyLight.gd" id="1_wl1ev"]
+[ext_resource type="Texture2D" uid="uid://bqthlajge1a2q" path="res://assets/enemyTemp.png" id="2_1q75g"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_acvse"]
+size = Vector2(30, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wl1ev"]
+size = Vector2(32, 65)
+
+[node name="enemyLight" type="CharacterBody2D"]
+script = ExtResource("1_wl1ev")
+randomize_hits = true
+knockback = 700.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_1q75g")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_acvse")
+
+[node name="HurtBox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_wl1ev")

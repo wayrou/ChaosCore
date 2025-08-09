@@ -1,22 +1,92 @@
-[gd_scene load_steps=5 format=3 uid="uid://de854ey4oe2cm"]
+[gd_scene load_steps=10 format=4 uid="uid://de854ey4oe2cm"]
 
-[ext_resource type="Texture2D" uid="uid://blu0kuy2ut1oa" path="res://assets/base_floor.png" id="1_ihg2l"]
+[ext_resource type="Texture2D" uid="uid://361rd4xqelhe" path="res://assets/playerTemp.png" id="2_04mld"]
+[ext_resource type="TileSet" uid="uid://d4duf7k1x0qg8" path="res://tilesets/new_tile_set.tres" id="2_cmr4h"]
+[ext_resource type="Script" uid="uid://dy6ep1cor3ut7" path="res://scripts/smartCamera.gd" id="4_ihg2l"]
 [ext_resource type="PackedScene" uid="uid://caunhqxcituvy" path="res://scenes/player.tscn" id="4_oxv3c"]
+[ext_resource type="Script" uid="uid://cgno4duyx84mt" path="res://scripts/exitArea.gd" id="5_bxm4v"]
+[ext_resource type="Script" uid="uid://j7nvxjcxfxor" path="res://scenes/cornerBanner.gd" id="6_rhu6p"]
+[ext_resource type="Script" uid="uid://dbyyvkm3igag1" path="res://scenes/FreeMoveHUD.gd" id="7_oxv3c"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_cmr4h"]
-texture = ExtResource("1_ihg2l")
-texture_region_size = Vector2i(32, 32)
-0:0/0 = 0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_04mld"]
+size = Vector2(30, 63)
 
-[sub_resource type="TileSet" id="TileSet_04mld"]
-tile_size = Vector2i(32, 32)
-sources/4 = SubResource("TileSetAtlasSource_cmr4h")
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rhu6p"]
+size = Vector2(61, 29)
 
 [node name="BaseCamp" type="Node2D"]
 
-[node name="Player" parent="." instance=ExtResource("4_oxv3c")]
-position = Vector2(3, 3)
-
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 position = Vector2(17, -7)
-tile_set = SubResource("TileSet_04mld")
+tile_map_data = PackedByteArray("AAD2//z/AAACAAIAAAD2//3/AAACAAIAAAD2//7/AAACAAIAAAD2////AAACAAIAAAD2/wAAAAACAAIAAAD2/wEAAAACAAIAAAD2/wIAAAACAAIAAAD2/wMAAAACAAIAAAD2/wQAAAACAAIAAAD3//z/AAACAAIAAAD3//3/AAACAAIAAAD3//7/AAACAAIAAAD3////AAACAAIAAAD3/wAAAAACAAIAAAD3/wEAAAACAAIAAAD3/wIAAAACAAIAAAD3/wMAAAACAAIAAAD3/wQAAAACAAIAAAD4//z/AAACAAIAAAD4//3/AAACAAIAAAD4//7/AAACAAIAAAD4////AAACAAIAAAD4/wAAAAACAAIAAAD4/wEAAAACAAIAAAD4/wIAAAACAAIAAAD4/wMAAAACAAIAAAD4/wQAAAACAAIAAAD5//z/AAACAAIAAAD5//3/AAACAAIAAAD5//7/AAACAAIAAAD5////AAACAAIAAAD5/wAAAAACAAIAAAD5/wEAAAACAAIAAAD5/wIAAAACAAIAAAD5/wMAAAACAAIAAAD5/wQAAAACAAIAAAD6//z/AAACAAIAAAD6//3/AAACAAIAAAD6//7/AAACAAIAAAD6////AAACAAIAAAD6/wAAAAACAAIAAAD6/wEAAAACAAIAAAD6/wIAAAACAAIAAAD6/wMAAAACAAIAAAD6/wQAAAACAAIAAAD7//z/AAACAAIAAAD7//3/AAACAAIAAAD7//7/AAACAAIAAAD7////AAACAAIAAAD7/wAAAAACAAIAAAD7/wEAAAACAAIAAAD7/wIAAAACAAIAAAD7/wMAAAACAAIAAAD7/wQAAAACAAIAAAD8//z/AAACAAIAAAD8//3/AAACAAIAAAD8//7/AAACAAIAAAD8////AAACAAIAAAD8/wAAAAACAAIAAAD8/wEAAAACAAIAAAD8/wIAAAACAAIAAAD8/wMAAAACAAIAAAD8/wQAAAACAAIAAAD9//z/AAACAAIAAAD9//3/AAACAAIAAAD9//7/AAACAAIAAAD9////AAACAAIAAAD9/wAAAAACAAIAAAD9/wEAAAACAAIAAAD9/wIAAAACAAIAAAD9/wMAAAACAAIAAAD9/wQAAAACAAIAAAD+//z/AAACAAIAAAD+//3/AAACAAIAAAD+//7/AAACAAIAAAD+////AAACAAIAAAD+/wAAAAACAAIAAAD+/wEAAAACAAIAAAD+/wIAAAACAAIAAAD+/wMAAAACAAIAAAD+/wQAAAACAAIAAAD///z/AAACAAIAAAD///3/AAACAAIAAAD///7/AAACAAIAAAD/////AAACAAIAAAD//wAAAAACAAIAAAD//wEAAAACAAIAAAD//wIAAAACAAIAAAD//wMAAAACAAIAAAD//wQAAAACAAIAAAAAAPz/AAACAAIAAAAAAP3/AAACAAIAAAAAAP7/AAACAAIAAAAAAP//AAACAAIAAAAAAAAAAAACAAIAAAAAAAEAAAACAAIAAAAAAAIAAAACAAIAAAAAAAMAAAACAAIAAAAAAAQAAAACAAIAAAABAPz/AAACAAIAAAABAP3/AAACAAIAAAABAP7/AAACAAIAAAABAP//AAACAAIAAAABAAAAAAACAAIAAAABAAEAAAACAAIAAAABAAIAAAACAAIAAAABAAMAAAACAAIAAAABAAQAAAACAAIAAAACAPz/AAACAAIAAAACAP3/AAACAAIAAAACAP7/AAACAAIAAAACAP//AAACAAIAAAACAAAAAAACAAIAAAACAAEAAAACAAIAAAACAAIAAAACAAIAAAACAAMAAAACAAIAAAACAAQAAAACAAIAAAADAPz/AAACAAIAAAADAP3/AAACAAIAAAADAP7/AAACAAIAAAADAP//AAACAAIAAAADAAAAAAACAAIAAAADAAEAAAACAAIAAAADAAIAAAACAAIAAAADAAMAAAACAAIAAAADAAQAAAACAAIAAAAEAPz/AAACAAIAAAAEAP3/AAACAAIAAAAEAP7/AAACAAIAAAAEAP//AAACAAIAAAAEAAAAAAACAAIAAAAEAAEAAAACAAIAAAAEAAIAAAACAAIAAAAEAAMAAAACAAIAAAAEAAQAAAACAAIAAAAFAPz/AAACAAIAAAAFAP3/AAACAAIAAAAFAP7/AAACAAIAAAAFAP//AAACAAIAAAAFAAAAAAACAAIAAAAFAAEAAAACAAIAAAAFAAIAAAACAAIAAAAFAAQAAAACAAIAAAAGAPz/AAACAAIAAAAGAP3/AAACAAIAAAAGAP7/AAACAAIAAAAGAP//AAACAAIAAAAGAAAAAAACAAIAAAAGAAEAAAACAAIAAAAGAAIAAAACAAIAAAAGAAMAAAACAAIAAAAGAAQAAAACAAIAAAAHAPz/AAACAAIAAAAHAP3/AAACAAIAAAAHAP7/AAACAAIAAAAHAP//AAACAAIAAAAHAAAAAAACAAIAAAAHAAEAAAACAAIAAAAHAAIAAAACAAIAAAAHAAMAAAACAAIAAAAHAAQAAAACAAIAAAD1//v/AAAAAAAAAAD3//v/AAAAAAAAAAD5//v/AAAAAAAAAAD7//v/AAAAAAAAAAD9//v/AAAAAAAAAAD///v/AAAAAAAAAAABAPv/AAAAAAAAAAADAPv/AAAAAAAAAAAFAPv/AAAAAAAAAAAHAPv/AAAAAAAAAAAIAPz/AAAAAAAAAAAIAP3/AAAAAAAAAAAIAP7/AAAAAAAAAAAIAP//AAAAAAAAAAAIAAAAAAAAAAAAAAAIAAEAAAAAAAAAAAAIAAIAAAAAAAAAAAAIAAMAAAAAAAAAAAAIAAQAAAAAAAAAAAAIAAUAAAAAAAAAAAD1//z/AAAAAAAAAAD1//3/AAAAAAAAAAD1//7/AAAAAAAAAAD1////AAAAAAAAAAD1/wAAAAAAAAAAAAD1/wEAAAAAAAAAAAD1/wIAAAAAAAAAAAD1/wMAAAAAAAAAAAD1/wQAAAAAAAAAAAD2/wUAAAAAAAAAAAD4/wUAAAAAAAAAAAD6/wUAAAAAAAAAAAD8/wUAAAAAAAAAAAD+/wUAAAAAAAAAAAAAAAUAAAAAAAAAAAACAAUAAAAAAAAAAAAEAAUAAAAAAAAAAAAGAAUAAAAAAAAAAAAFAAMAAAADAAMAAAA=")
+tile_set = ExtResource("2_cmr4h")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+position = Vector2(-240, -72)
+
+[node name="fromDungeonFloor" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(0, 1)
+
+[node name="fromBaseCamp" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(13, 0)
+
+[node name="actors" type="Node2D" parent="."]
+z_index = 5
+z_as_relative = false
+y_sort_enabled = true
+
+[node name="Player" parent="actors" groups=["player"] instance=ExtResource("4_oxv3c")]
+position = Vector2(3, 3)
+
+[node name="Sprite2D" type="Sprite2D" parent="actors/Player"]
+y_sort_enabled = true
+texture = ExtResource("2_04mld")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="actors/Player"]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_04mld")
+
+[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("target")]
+script = ExtResource("4_ihg2l")
+target = NodePath("../actors/Player")
+
+[node name="exitToDungeon" type="Area2D" parent="."]
+position = Vector2(210, 120)
+script = ExtResource("5_bxm4v")
+next_scene = "uid://c52on4gp2hrfh"
+spawn_name = &"fromDungeonFloor"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="exitToDungeon"]
+shape = SubResource("RectangleShape2D_rhu6p")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="cornerBanner" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("6_rhu6p")
+text = "baseCamp"
+
+[node name="Background" type="Panel" parent="HUD/cornerBanner"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="HUD/cornerBanner/Background"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="FreeMoveHUD" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("7_oxv3c")
+
+[node name="Label" type="Label" parent="HUD/FreeMoveHUD"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
