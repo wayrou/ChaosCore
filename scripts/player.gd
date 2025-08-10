@@ -9,31 +9,24 @@ extends CharacterBody2D
 # --- Combat / Health ---
 signal health_changed(current: int, max: int)
 
-# Add near your other vars (top of script)
 @export var attack_hitbox: Area2D
 @export var hurtbox: Area2D
 @export var debug_attack: bool = true
-
 
 @export var max_hp: int = 5
 @export var invincible_time: float = 0.6      # i-frames after getting hit (sec)
 
 @export var attack_cooldown: float = 0.25     # time between swings
 @export var attack_duration: float = 0.10     # how long the hitbox is active
-@export var attack_offset: float = 26.0      # distance from player to start of hit
-@export var attack_length: float = 44.0      # long dimension of the rectangle
-@export var attack_thickness: float = 18.0   # short dimension (height)
+@export var attack_offset: float = 26.0       # distance from player to start of hit
+@export var attack_length: float = 44.0       # long dimension of the rectangle
+@export var attack_thickness: float = 18.0    # short dimension (height)
 
 @export_file("*.tscn") var respawn_scene: String = ""               # set to BaseCamp.tscn
 @export var respawn_spawn_name: StringName = &"fromDungeonFloor"    # marker in BaseCamp/SpawnPoints
 @export var heal_on_respawn: bool = true                            # toggle full heal on respawn
 
-
-
-# Drag these in the Inspector (or leave empty to auto-find by name)
-
-
-
+# --- Runtime state ---
 var hp: int
 var input_vector: Vector2 = Vector2.ZERO
 var _last_dir: Vector2 = Vector2.RIGHT
@@ -41,11 +34,15 @@ var _attack_cd: float = 0.0
 var _inv: float = 0.0
 var _attacking: bool = false
 var _attack_shape: CollisionShape2D
-
 var _dead: bool = false
 
+# --- Interact (NPC) ---
+# Use Node for safety even if InteractableNPC class isn't loaded yet.
+var _current_interactable: Node
+var _last_interactable: Node
+var _last_seen_time := 0.0
+const INTERACT_GRACE := 0.20  # seconds after exit you can still interact
 
-# Replace your _ready() setup block with this
 func _ready() -> void:
 	add_to_group("player", true)
 
@@ -55,39 +52,18 @@ func _ready() -> void:
 	_ensure_attack_hitbox()
 	_ensure_hurtbox()
 
-
-	# Resolve nodes if not set
+	# Resolve nodes if not set (kept for convenience)
 	if attack_hitbox == null:
 		attack_hitbox = get_node_or_null("AttackHitbox") as Area2D
 	if hurtbox == null:
 		hurtbox = get_node_or_null("Hurtbox") as Area2D
 
-	# Attack hitbox setup
-	if attack_hitbox:
-		attack_hitbox.add_to_group("player_attack", true)
-		attack_hitbox.monitoring = false  # enemy hurtbox will do the monitoring
-		# Put the attack on Physics Layer 1 (default) and don't scan anything ourselves
-		attack_hitbox.collision_layer = 1
-		attack_hitbox.collision_mask = 0
-
-		var cs := attack_hitbox.get_node_or_null("CollisionShape2D") as CollisionShape2D
-		if cs:
-			cs.disabled = true  # start disabled
-
-	if debug_attack:
-		attack_hitbox.area_entered.connect(_on_attack_hitbox_area_entered)
-		attack_hitbox.body_entered.connect(_on_attack_hitbox_body_entered)
-		
-func _on_attack_hitbox_area_entered(a: Area2D) -> void:
-	print("[ATTACK] overlapped AREA:", a.name, " groups:", a.get_groups())
-
-	# Hurtbox listens for enemy touch damage (enemies can just be in group "enemy")
-	if hurtbox:
-		hurtbox.monitoring = true
-		var hc := hurtbox.get_node_or_null("CollisionShape2D") as CollisionShape2D
-		if hc and hc.disabled: hc.disabled = false
-		hurtbox.body_entered.connect(_on_hurtbox_body_entered)
-		hurtbox.area_entered.connect(_on_hurtbox_area_entered)
+	# Debug listeners (connect once)
+	if debug_attack and attack_hitbox:
+		if not attack_hitbox.area_entered.is_connected(_on_attack_hitbox_area_entered):
+			attack_hitbox.area_entered.connect(_on_attack_hitbox_area_entered)
+		if not attack_hitbox.body_entered.is_connected(_on_attack_hitbox_body_entered):
+			attack_hitbox.body_entered.connect(_on_attack_hitbox_body_entered)
 
 func _get_input_vector() -> Vector2:
 	return Vector2(
@@ -113,13 +89,18 @@ func _physics_process(delta: float) -> void:
 	velocity = velocity.move_toward(desired_vel, rate)
 	move_and_slide()
 
-	# attack input
+	# free-attack input (separate action so attack key can do interact)
 	if Input.is_action_just_pressed("attackFreeMove"):
 		_try_attack()
 
 func _try_attack() -> void:
 	if _attacking or _attack_cd > 0.0 or attack_hitbox == null:
 		return
+	# Don't swing if we're near an interactable (or just left one)
+	var now := Time.get_ticks_msec() / 1000.0
+	if _current_interactable != null or (now - _last_seen_time) <= INTERACT_GRACE:
+		return
+
 	if debug_attack: print("[ATTACK] pressed")
 
 	_attacking = true
@@ -134,7 +115,7 @@ func _try_attack() -> void:
 	# start at attack_offset + half the hit length along the local X axis (the long side)
 	attack_hitbox.position = dir * (attack_offset + attack_length * 0.5)
 
-	# (optional) ensure size is up-to-date if you tweak exports at runtime
+	# ensure size up-to-date
 	if _attack_shape and _attack_shape.shape is RectangleShape2D:
 		(_attack_shape.shape as RectangleShape2D).size = Vector2(attack_length, attack_thickness)
 		_attack_shape.disabled = false
@@ -148,10 +129,7 @@ func _try_attack() -> void:
 	attack_hitbox.monitoring = false
 	_attacking = false
 
-
-
 # --- Taking damage / death ---
-
 func take_damage(amount: int = 1) -> void:
 	if _inv > 0.0:
 		return
@@ -164,7 +142,7 @@ func take_damage(amount: int = 1) -> void:
 		_on_player_death()
 
 func _on_player_death() -> void:
-	if _dead: 
+	if _dead:
 		return
 	_dead = true
 
@@ -197,9 +175,7 @@ func _on_player_death() -> void:
 		push_error("Respawn failed: %s" % err)
 		_dead = false  # let another death attempt try again
 
-
-
-# Hurtbox callbacks: touch damage from enemies / enemy attacks
+# --- Hurtbox callbacks: touch damage from enemies / enemy attacks
 func _on_hurtbox_body_entered(b: Node2D) -> void:
 	if b.is_in_group("enemy"):
 		take_damage(1)
@@ -207,9 +183,38 @@ func _on_hurtbox_body_entered(b: Node2D) -> void:
 func _on_hurtbox_area_entered(a: Area2D) -> void:
 	if a.is_in_group("enemy_attack"):
 		take_damage(1)
-		
-# Helpers (put anywhere in the script)
 
+# --- Debug attack hitbox prints
+func _on_attack_hitbox_area_entered(a: Area2D) -> void:
+	print("[ATTACK] overlapped AREA:", a.name, " groups:", a.get_groups())
+
+func _on_attack_hitbox_body_entered(b: Node2D) -> void:
+	print("[ATTACK] overlapped BODY:", b.name, " groups:", b.get_groups())
+
+# --- Interact wiring (called by NPC Areas) ---
+func set_current_interactable(i: Node) -> void:
+	_current_interactable = i
+	if i:
+		_last_interactable = i
+		_last_seen_time = Time.get_ticks_msec() / 1000.0
+	print("[Player] current_interactable:", i)
+
+func _process(_dt: float) -> void:
+	# Interact uses the "attack" action (menu open/close handled by NPC/menu)
+	if Input.is_action_just_pressed("attack") and not _is_in_menu():
+		var target := _current_interactable
+		var now := Time.get_ticks_msec() / 1000.0
+		if target == null and (now - _last_seen_time) <= INTERACT_GRACE:
+			target = _last_interactable
+		print("[ATTACK] pressed")
+		if target and target.has_method("interact"):
+			print("[ATTACK] -> interacting with:", target)
+			target.interact()
+
+func _is_in_menu() -> bool:
+	return get_tree().paused
+
+# --- Helpers ---
 func _ensure_attack_hitbox() -> void:
 	if attack_hitbox == null:
 		attack_hitbox = get_node_or_null("AttackHitbox") as Area2D
@@ -224,6 +229,7 @@ func _ensure_attack_hitbox() -> void:
 		cs.shape = shape
 		attack_hitbox.add_child(cs)
 
+	# baseline setup (debug-friendly)
 	attack_hitbox.add_to_group("player_attack", true)
 	attack_hitbox.collision_layer = 1
 	attack_hitbox.collision_mask = 1
@@ -234,9 +240,6 @@ func _ensure_attack_hitbox() -> void:
 		_attack_shape.disabled = true
 		if _attack_shape.shape is RectangleShape2D:
 			(_attack_shape.shape as RectangleShape2D).size = Vector2(attack_length, attack_thickness)
-
-
-
 
 func _ensure_hurtbox() -> void:
 	if hurtbox == null:
@@ -254,16 +257,14 @@ func _ensure_hurtbox() -> void:
 		hurtbox.add_child(cs)
 
 	hurtbox.monitoring = true
-	# make sure it can SEE the attack (which is on layer 1)
+	# make sure it can SEE layer 1 (where attack_hitbox lives in this setup)
 	hurtbox.collision_mask = hurtbox.collision_mask | 1
 
 	var hc := hurtbox.get_node_or_null("CollisionShape2D") as CollisionShape2D
-	if hc and hc.disabled: hc.disabled = false
+	if hc and hc.disabled:
+		hc.disabled = false
 
 	if not hurtbox.body_entered.is_connected(_on_hurtbox_body_entered):
 		hurtbox.body_entered.connect(_on_hurtbox_body_entered)
 	if not hurtbox.area_entered.is_connected(_on_hurtbox_area_entered):
 		hurtbox.area_entered.connect(_on_hurtbox_area_entered)
-
-func _on_attack_hitbox_body_entered(b: Node2D) -> void:
-	print("[ATTACK] overlapped BODY:", b.name, " groups:", b.get_groups())

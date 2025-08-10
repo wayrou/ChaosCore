@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://de854ey4oe2cm"]
+[gd_scene load_steps=13 format=4 uid="uid://de854ey4oe2cm"]
 
 [ext_resource type="Texture2D" uid="uid://361rd4xqelhe" path="res://assets/playerTemp.png" id="2_04mld"]
 [ext_resource type="TileSet" uid="uid://d4duf7k1x0qg8" path="res://tilesets/new_tile_set.tres" id="2_cmr4h"]
@@ -7,9 +7,14 @@
 [ext_resource type="Script" uid="uid://cgno4duyx84mt" path="res://scripts/exitArea.gd" id="5_bxm4v"]
 [ext_resource type="Script" uid="uid://j7nvxjcxfxor" path="res://scenes/cornerBanner.gd" id="6_rhu6p"]
 [ext_resource type="Script" uid="uid://dbyyvkm3igag1" path="res://scenes/FreeMoveHUD.gd" id="7_oxv3c"]
+[ext_resource type="Script" uid="uid://cxdqchvcgyktk" path="res://scenes/InteractableNPC.gd" id="8_sfbn2"]
+[ext_resource type="Texture2D" uid="uid://b5ixnigx466rs" path="res://assets/npcTemp.png" id="9_hbxgs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_04mld"]
 size = Vector2(30, 63)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wkrgx"]
+size = Vector2(48.5, 71)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rhu6p"]
 size = Vector2(61, 29)
@@ -45,6 +50,16 @@ texture = ExtResource("2_04mld")
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="actors/Player"]
 position = Vector2(0, -0.5)
 shape = SubResource("RectangleShape2D_04mld")
+
+[node name="Area2D" type="Area2D" parent="actors"]
+position = Vector2(-202, 55)
+script = ExtResource("8_sfbn2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="actors/Area2D"]
+shape = SubResource("RectangleShape2D_wkrgx")
+
+[node name="Sprite2D" type="Sprite2D" parent="actors/Area2D"]
+texture = ExtResource("9_hbxgs")
 
 [node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("target")]
 script = ExtResource("4_ihg2l")
