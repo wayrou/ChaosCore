@@ -69,7 +69,7 @@ target = NodePath("../actors/Player")
 position = Vector2(210, 120)
 script = ExtResource("5_bxm4v")
 next_scene = "uid://c52on4gp2hrfh"
-spawn_name = &"fromDungeonFloor"
+spawn_name = &"fromBaseCamp"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="exitToDungeon"]
 shape = SubResource("RectangleShape2D_rhu6p")
